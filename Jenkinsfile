@@ -1,22 +1,21 @@
 pipeline {
     agent any
     stages {
-        stage ('Clone') {
-            steps {
-                git branch: 'master', url: "https://github.com/nikonorovi/devops_test.git"
-                withMaven(
-                    maven: 'Maven_3.6',
+        stage('Preparation') {  
+
+            sh 'mvn archetype:generate -B ' +
+            '-DarchetypeGroupId=org.apache.maven.archetypes ' +
+            '-DarchetypeArtifactId=maven-archetype-quickstart ' +
+            '-DgroupId=com.company -DartifactId=myproject'
+      
  
-              sh "mvn clean install"
-            }
         }
-
-
-
-        stage ('Artifactory configuration') {
-            steps {
-                echo "test"
-            }
-        }
+        stage('Build') {
+            
+            dir ('myproject') {
+                sh 'mvn clean install test'
+            } 
+       
+       }
     }
 }
