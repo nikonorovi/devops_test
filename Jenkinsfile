@@ -4,11 +4,6 @@ pipeline {
         maven 'Maven 3.6.0'
         jdk 'jdk8'
     }
-//    parameters {
-//        booleanParam(name: "RELEASE",
-//                description: "Build a release from current commit.",
-//                defaultValue: false)
-//    }
     stages {
     stage('Checkout external proj') {
         steps {
@@ -29,9 +24,8 @@ pipeline {
 
         stage ('Build') {
             steps {
-                sh 'mvn versions:set -DnewVersion=0.0.1.${BUILD_NUMBER}-${JOB_NAME}-MASTER'
                 sh 'mvn clean install '
-                sh 'ls ./target/ |grep .jar$|xargs -i cp ./target/{} /data/repo/'
+                sh 'ls ./target/ |grep .jar$|xargs -i cp ./target/{} /data/repo/example-0.0.1-${BUILD_NUMBER}-master.jar'
             }
         }
     }
