@@ -29,7 +29,7 @@ pipeline {
 
         stage ('Build') {
             steps {
-                sh 'mvn versions:set -DnewVersion=0.0.1.${BUILD_NUMBER}-${JOB_NAME}'
+                sh 'mvn versions:set -DnewVersion=0.0.1.${BUILD_NUMBER}-${JOB_NAME}-SNAPSHOT'
                 sh 'mvn clean install '
                 sh 'ls ./target/ |grep .jar$|xargs -i cp ./target/{} /data/repo/'
             }
