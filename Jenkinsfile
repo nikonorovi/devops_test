@@ -1,9 +1,4 @@
 pipeline {
-    environment {
-        registry = "inik/gamepoint"
-        registryCredential = 'dockerhub'
-        dockerImage = 'app_dev_img inik/gamepoint:${BUILD_NUMBER}'
-  }
     agent any
     tools {
         maven 'Maven 3.6.0'
@@ -12,7 +7,7 @@ pipeline {
     stages {
     stage('Checkout external proj') {
         steps {
-            git branch: 'develop',
+            git branch: 'master',
                 url: 'https://github.com/nikonorovi/devops_test.git'
 
             sh "ls -lat"
@@ -30,7 +25,7 @@ pipeline {
         stage ('Build') {
             steps {
                 sh 'mvn clean install '
-                sh 'ls ./target/ |grep .jar$|xargs -i cp ./target/{} /data/repo/example-0.0.1-${BUILD_NUMBER}-develop.jar'
+                sh 'ls ./target/ |grep .jar$|xargs -i cp ./target/{} /data/repo/example-0.0.1-${BUILD_NUMBER}-master.jar'
             }
         }
         stage ('Clear old container') {
