@@ -33,6 +33,13 @@ pipeline {
                 sh 'ls ./target/ |grep .jar$|xargs -i cp ./target/{} /data/repo/example-0.0.1-${BUILD_NUMBER}-develop.jar'
             }
         }
+        stage ('Clear old container') {
+            steps {
+                sh 'docker stop spring_dev_app'
+                sh 'docker rm spring_dev_app'
+                sh 'docker rmi app_dev_img'
+            }
+        }
         stage ('Build image and run') {
             steps {
             sh '''
@@ -42,7 +49,6 @@ pipeline {
             CMD java -jar /*.jar
             '''
             sh 'docker build -t app_dev_img .'
-            sh 'docker tag app_dev_img inik/gamepoint:${BUILD_NUMBER}'
             sh 'docker run -d -p 8091:8080 --name spring_dev_app app_dev_img'
             }
         }
@@ -62,11 +68,12 @@ pipeline {
         }
         stage ('Push image to registry') {
             steps {
-                script {
-                    docker.withRegistry( '', registryCredential ) {
-                        dockerImage.push()  
-                }
-                }    
+                withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']])
+                        {
+                            sh 'docker login -u $USERNAME -p $PASSWORD'
+                            sh 'docker tag app_dev_img inik/gamepoint:latest'
+                            sh 'docker push inik/gamepoint'
+                        }
             }
         }
     }
