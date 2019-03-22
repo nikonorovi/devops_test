@@ -55,7 +55,7 @@ pipeline {
         stage ('Test app') {
             steps {
                 sh '''#!/bin/bash
-                    status=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8090/up)
+                    status=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8091/up)
                     if [[ "$status" -eq 200 ]];then
                         echo "APP returned response 200"
                         exit 0
