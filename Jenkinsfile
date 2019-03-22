@@ -1,9 +1,4 @@
 pipeline {
-    environment {
-        registry = "inik/gamepoint"
-        registryCredential = 'dockerhub'
-        dockerImage = 'app_dev_img inik/gamepoint:${BUILD_NUMBER}'
-  }
     agent any
     tools {
         maven 'Maven 3.6.0'
