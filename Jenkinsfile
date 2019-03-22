@@ -1,4 +1,9 @@
 pipeline {
+    environment {
+        registry = "inik/gamepoint"
+        registryCredential = 'dockerhub'
+        dockerImage = 'app_dev_img inik/gamepoint:${BUILD_NUMBER}'
+  }
     agent any
     tools {
         maven 'Maven 3.6.0'
@@ -26,6 +31,42 @@ pipeline {
             steps {
                 sh 'mvn clean install '
                 sh 'ls ./target/ |grep .jar$|xargs -i cp ./target/{} /data/repo/example-0.0.1-${BUILD_NUMBER}-develop.jar'
+            }
+        }
+        stage ('Build image and run') {
+            steps {
+            sh '''
+            cat << EOF > Dockerfile
+            FROM openjdk:8-jdk
+            COPY ./target/*.jar /
+            CMD java -jar /*.jar
+            '''
+            sh 'docker build -t app_dev_img .'
+            sh 'docker tag app_dev_img inik/gamepoint:${BUILD_NUMBER}'
+            sh 'docker run -d -p 8091:8080 --name spring_dev_app app_dev_img'
+            }
+        }
+        stage ('Test app') {
+            steps {
+                sh '''#!/bin/bash
+                    status=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8090/up)
+                    if [[ "$status" -eq 200 ]];then
+                        echo "APP returned response 200"
+                        exit 0
+                    else
+                        echo "APP returned response 500"
+                        exit 2
+                    fi
+                '''
+            }
+        }
+        stage ('Push image to registry') {
+            steps {
+                script {
+                    docker.withRegistry( '', registryCredential ) {
+                        dockerImage.push()  
+                }
+                }    
             }
         }
     }
