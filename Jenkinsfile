@@ -7,7 +7,7 @@ pipeline {
     stages {
     stage('Checkout external proj') {
         steps {
-            git branch: 'master',
+            git branch: 'develop',
                 url: 'https://github.com/nikonorovi/devops_test.git'
 
             sh "ls -lat"
