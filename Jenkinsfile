@@ -30,9 +30,9 @@ pipeline {
         }
         stage ('Clear old container') {
             steps {
-                sh 'docker stop spring_dev_app'
-                sh 'docker rm spring_dev_app'
-                sh 'docker rmi app_dev_img'
+                sh 'docker 2>/dev/null stop spring_dev_app | true'
+                sh 'docker 2>/dev/null rm spring_dev_app | true'
+                sh 'docker 2>/dev/null rmi app_dev_img | true'
             }
         }
         stage ('Build image and run') {
