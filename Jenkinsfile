@@ -45,6 +45,7 @@ pipeline {
             '''
             sh 'docker build -t app_dev_img .'
             sh 'docker run -d -p 8091:8080 --name spring_dev_app app_dev_img'
+            sh 'sleep 5'
             }
         }
         stage ('Test app') {
@@ -73,4 +74,3 @@ pipeline {
         }
     }
 }
-
