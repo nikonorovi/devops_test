@@ -72,5 +72,10 @@ pipeline {
                         }
             }
         }
+        stage ('Trigger deploy to prod') {
+            steps {
+                build 'deploy_prod'
+            }
+        }
     }
 }
