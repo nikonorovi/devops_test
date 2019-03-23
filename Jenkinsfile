@@ -24,7 +24,7 @@ pipeline {
 
         stage ('Build') {
             steps {
-                sh 'mvn clean install '
+                sh 'mvn clean install'
                 sh 'ls ./target/ |grep .jar$|xargs -i cp ./target/{} /data/repo/example-0.0.1-${BUILD_NUMBER}-master.jar'
             }
         }
